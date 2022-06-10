@@ -1,7 +1,7 @@
 import config from "config";
 import { get } from "lodash";
 import { Request, Response } from "express";
-import { validatePassword } from "../User/user.service";
+import { validatePassword } from "../Account/account.service";
 import {
   createSession,
   createAccessToken,
@@ -11,19 +11,19 @@ import {
 import { sign } from "../utils/jwt.utils";
 
 export async function createUserSessionHandler(req: Request, res: Response) {
-  // validate the email and password
-  const user = await validatePassword(req.body);
+  // validate the account number and password
+  const account = await validatePassword(req.body);
 
-  if (!user) {
-    return res.status(401).send("Invalid username or password");
+  if (!account) {
+    return res.status(401).send("Invalid accountNumber or password");
   }
 
   // Create a session
-  const session = await createSession(user._id, req.get("user-agent") || "");
+  const session = await createSession(account._id, req.get("user-agent") || "");
 
   // create access token
   const accessToken = createAccessToken({
-    user,
+    account,
     session,
   });
 

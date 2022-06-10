@@ -20,7 +20,7 @@ export async function getUsers() {
   return await User.find().select("name")
 }
 
-export async function validatePassword({
+/* export async function validatePassword({
   email,
   password,
 }: {
@@ -40,4 +40,4 @@ export async function validatePassword({
   }
 
   return omit(user.toJSON(), "password")
-}
+} */

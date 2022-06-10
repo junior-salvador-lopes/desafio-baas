@@ -1,4 +1,4 @@
-import { object, string, ref, number } from "yup";
+import { object, string, ref } from "yup";
 
 export const createUserSchema = object({
   body: object({
@@ -6,7 +6,8 @@ export const createUserSchema = object({
     cpf: string()
       .required("CPF is required")
       .min(11, "CPF deve ter no mínimo 11 dígitos")
-      .max(11, "CPF deve ter no máximo 11 dígitos"),
+      .max(11, "CPF deve ter no máximo 11 dígitos")
+      .matches(/^[0-9_.-]*$/, "CPF can only contain numbers."),
     password: string()
       .required("Password is required")
       .min(6, "Password is too short - should be 6 chars minimum.")
@@ -30,9 +31,12 @@ export const createUserSessionSchema = object({
     cpf: string()
       .required("CPF is required")
       .min(11, "CPF deve ter no mínimo 11 dígitos")
-      .max(11, "CPF deve ter no máximo 11 dígitos"),
+      .max(11, "CPF deve ter no máximo 11 dígitos")
+      .matches(/^[0-9_.-]*$/, "CPF can only contain numbers."),
     email: string()
       .email("Must be a valid email")
       .required("Email is required"),
   }),
 });
+
+

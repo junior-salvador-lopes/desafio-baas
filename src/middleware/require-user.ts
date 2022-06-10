@@ -7,7 +7,7 @@ const requiresUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  const user = get(req, "user");
+  const user = get(req, "account");
   if (!user) {
     log.error("user required")
     return res.sendStatus(403);
