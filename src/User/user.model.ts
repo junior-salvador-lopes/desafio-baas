@@ -5,6 +5,7 @@ import config from "config";
 export interface UserDocument extends mongoose.Document {
   email: string;
   name: string;
+  cpf: string;
   password: string;
   createdAt: Date;
   updatedAt: Date;
@@ -14,6 +15,7 @@ export interface UserDocument extends mongoose.Document {
 const UserSchema = new mongoose.Schema(
   {
     email: { type: String, required: true, unique: true },
+    cpf: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     password: { type: String, required: true },
   },
