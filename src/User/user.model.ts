@@ -25,6 +25,9 @@ const UserSchema = new mongoose.Schema(
 UserSchema.pre("save", async function (next: any) {
   let user = this as UserDocument;
 
+  //ensure only numbers at user cpf property
+  const filteredCPF = user.cpf.replace(/[^0-9s]/g, "")
+
   // only hash the password if it has been modified (or is new)
   if (!user.isModified("password")) return next();
 
@@ -35,6 +38,7 @@ UserSchema.pre("save", async function (next: any) {
 
   // Replace the password with the hash
   user.password = hash;
+  user.cpf = filteredCPF
 
   return next();
 });
