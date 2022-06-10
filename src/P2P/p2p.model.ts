@@ -9,9 +9,9 @@ export interface P2PDocument extends mongoose.Document {
 }
 const P2PSchema = new mongoose.Schema(
     {
-      account: { type: mongoose.Schema.Types.ObjectId, ref: "Account" },
-      valid: { type: Boolean, default: true },
-      userAgent: { type: String },
+        fromAccountId: { type: mongoose.Schema.Types.ObjectId, ref: "Account" },
+        toAccountId: { type: mongoose.Schema.Types.ObjectId, ref: "Account" },
+        amount: { type: Number, required: true },
     },
     { timestamps: true }
   );

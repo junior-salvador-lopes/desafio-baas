@@ -16,7 +16,7 @@ export interface AccountDocument extends mongoose.Document {
 
 const AccountSchema = new mongoose.Schema(
   {
-    ownerId: { type: String, required: true, unique: true },
+    ownerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", unique: true },
     accountNumber: { type: String, required: true, unique: true},
     identifier: { type: String, required: true},
     balance: { type: Number, required: true, default: 0},
