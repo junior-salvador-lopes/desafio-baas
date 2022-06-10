@@ -19,13 +19,8 @@ const UserSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-export interface HookNextFunction {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (error?: Error): any
-  }
-  
 
-UserSchema.pre("save", async function (next: HookNextFunction) {
+UserSchema.pre("save", async function (next: any) {
   let user = this as UserDocument;
 
   // only hash the password if it has been modified (or is new)

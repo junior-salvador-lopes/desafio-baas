@@ -1,15 +1,17 @@
 import { LeanDocument, FilterQuery, UpdateQuery } from "mongoose";
 import config from "config";
 import { get } from "lodash";
-import  { UserDocument }  from "../model/user.model";
-import Session, { SessionDocument } from "../model/session.model";
+import  { UserDocument }  from "../User/user.model";
+import Session, { SessionDocument } from "./session.model";
 import { sign, decode } from "../utils/jwt.utils";
-import { findUser } from "./user.service";
+import { findUser } from "../User/user.service";
+import { omit } from "lodash";
+
 
 export async function createSession(userId: string, userAgent: string) {
   const session = await Session.create({ user: userId, userAgent });
 
-  return session.toJSON();
+  return omit(session.toJSON(), "password");
 }
 
 export function createAccessToken({
@@ -25,8 +27,8 @@ export function createAccessToken({
 }) {
   // Build and return the new access token
   const accessToken = sign(
-    { ...user, session: session._id },
-    { expiresIn: config.get("accessTokenTtl") } // 15 minutes
+    { user, session: session._id },
+    { expiresIn: config.get("accessTokenTtl") } // 120 minutes
   );
 
   return accessToken;
