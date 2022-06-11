@@ -2,10 +2,24 @@ import { DocumentDefinition, FilterQuery } from "mongoose";
 import Account, { AccountDocument } from "./account.model";
 import { omit } from "lodash";
 
-
-export async function createAccount(input: DocumentDefinition<AccountDocument>) {
+export async function createAccount(
+  input: DocumentDefinition<AccountDocument>
+) {
   try {
     return await Account.create(input);
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+export async function updateAccount(
+  input: DocumentDefinition<AccountDocument>
+) {
+  console.log(input._id)
+  try {
+    return await Account.updateOne(
+      { _id: input._id },
+      { $set: { balance: input.balance } }
+    );
   } catch (error: any) {
     throw new Error(error);
   }
@@ -16,7 +30,7 @@ export async function findAccount(query: FilterQuery<AccountDocument>) {
 }
 
 export async function getAccounts() {
-  return await Account.find().select(["ownerId","accountNumber"])
+  return await Account.find().select(["ownerId", "accountNumber"]);
 }
 
 export async function validatePassword({
@@ -38,5 +52,5 @@ export async function validatePassword({
     return false;
   }
 
-  return omit(account.toJSON(), "password")
+  return omit(account.toJSON(), "password");
 }

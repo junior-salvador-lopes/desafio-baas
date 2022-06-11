@@ -40,7 +40,7 @@ export async function invalidateUserSessionHandler(
   req: Request,
   res: Response
 ) {
-  const sessionId = get(req, "user.session");
+  const sessionId = get(req, "account.session");
 
   await updateSession({ _id: sessionId }, { valid: false });
 
@@ -48,9 +48,8 @@ export async function invalidateUserSessionHandler(
 }
 
 export async function getUserSessionsHandler(req: Request, res: Response) {
-  const { user } = get(req, "user");
-
-  const sessions = await findSessions({ user: user._id, valid: false });
+  const { account } = get(req, "account");
+  const sessions = await findSessions({ account: account._id, valid: true });
 
   return res.send(sessions);
 }
