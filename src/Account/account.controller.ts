@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import { omit } from "lodash";
-import { createAccount, findAccount, getAccounts } from "./account.service";
+import {
+  createAccount,
+  findAccount,
+  findAccountBalance,
+  getAccounts,
+} from "./account.service";
 import log from "../logger";
 
 export async function createAccountHandler(req: Request, res: Response) {
@@ -24,6 +29,16 @@ export async function getAllAccountsHandler(req: Request, res: Response) {
 export async function getAccountDetailsHandler(req: Request, res: Response) {
   try {
     const account = await findAccount(req.params);
+    return res.send(account);
+  } catch (e: any) {
+    log.error(e);
+    return res.status(409).send(e.message);
+  }
+}
+
+export async function getAccountBalanceHandler(req: Request, res: Response) {
+  try {
+    const account = await findAccountBalance(req.params);
     return res.send(account);
   } catch (e: any) {
     log.error(e);

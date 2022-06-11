@@ -13,7 +13,7 @@ import {
 } from "./Session/session.controller";
 import requiresUser from "./middleware/require-user";
 import { createAccountSchema, createAccountSessionSchema } from "./Account/account.schema";
-import { createAccountHandler, getAccountDetailsHandler, getAllAccountsHandler } from "./Account/account.controller";
+import { createAccountHandler, getAccountBalanceHandler, getAccountDetailsHandler, getAllAccountsHandler } from "./Account/account.controller";
 import { createP2PSchema } from "./P2P/p2p.schema";
 import { createP2PHandler, getP2PHandler } from "./P2P/p2p.controller";
 import checkOwner from "./middleware/check-owner";
@@ -32,6 +32,7 @@ export default function (app: Express) {
   app.delete("/api/logout", requiresUser, invalidateUserSessionHandler);
   app.post("/api/accounts", validateRequest(createAccountSchema), createAccountHandler);
   app.get("/api/accounts/:_id", requiresUser, getAccountDetailsHandler);
+  app.get("/api/accounts/balance/:_id", requiresUser, getAccountBalanceHandler);
   app.get("/api/accounts", requiresUser, getAllAccountsHandler);
   app.post("/api/p2p", requiresUser, checkOwner, validateRequest(createP2PSchema), createP2PHandler);
   app.get("/api/p2p/:_id", requiresUser, getP2PHandler);

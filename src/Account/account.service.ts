@@ -28,6 +28,11 @@ export async function findAccount(query: FilterQuery<AccountDocument>) {
   return Account.findOne(query).lean().select("-password");
 }
 
+export async function findAccountBalance(query: FilterQuery<AccountDocument>) {
+  const account = await Account.findOne(query).lean()
+  return {account: account?.accountNumber, balance: account?.balance }
+}
+
 export async function getAccounts() {
   return await Account.find().select(["ownerId", "accountNumber"]);
 }
