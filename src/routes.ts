@@ -15,7 +15,7 @@ import requiresUser from "./middleware/require-user";
 import { createAccountSchema, createAccountSessionSchema } from "./Account/account.schema";
 import { createAccountHandler, getAccountDetailsHandler, getAllAccountsHandler } from "./Account/account.controller";
 import { createP2PSchema } from "./P2P/p2p.schema";
-import { createP2PHandler } from "./P2P/p2p.controller";
+import { createP2PHandler, getP2PHandler } from "./P2P/p2p.controller";
 
 export default function (app: Express) {
   app.get("/healthcheck", (req: Request, res: Response) => res.sendStatus(200));
@@ -33,6 +33,8 @@ export default function (app: Express) {
   app.get("/api/accounts/:_id", requiresUser, getAccountDetailsHandler);
   app.get("/api/accounts", requiresUser, getAllAccountsHandler);
   app.post("/api/p2p", requiresUser, validateRequest(createP2PSchema), createP2PHandler);
+  app.get("/api/p2p/:_id", requiresUser, getP2PHandler);
+
 
 
 

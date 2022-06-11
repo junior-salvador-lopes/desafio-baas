@@ -4,9 +4,9 @@ import { AccountDocument } from "../Account/account.model";
 import { findAccount, updateAccount } from "../Account/account.service";
 import P2P, { P2PDocument } from "./p2p.model";
 
-export async function createP2P(input: DocumentDefinition<P2PDocument>) {
+export async function createP2P(p2p: DocumentDefinition<P2PDocument>) {
   try {
-    const { fromAccountId, toAccountId, amount } = input;
+    const { fromAccountId, toAccountId, amount } = p2p;
     const fromAccount = await checkPositiveBalanceAnGetIt(
       fromAccountId,
       amount
@@ -22,8 +22,27 @@ export async function createP2P(input: DocumentDefinition<P2PDocument>) {
       toAccount,
       amount
     );
-    console.log(sucessTransaction);
-    return await P2P.create(input);
+    return await P2P.create(p2p);
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export async function getP2PById(p2pId: any, offset: string, limit: string) {
+  try {
+    const results = await P2P.find()
+      .where({
+        $or: [{ fromAccountId: p2pId._id }, { toAccountId: p2pId._id }],
+      })
+      .skip(Number(offset))
+      .limit(Number(limit))
+      .sort({ createdAt: -1 });
+    const count = await P2P.find()
+      .where({
+        $or: [{ fromAccountId: p2pId._id }, { toAccountId: p2pId._id }],
+      })
+      .count();
+    return { results, records: count };
   } catch (error: any) {
     throw new Error(error);
   }
@@ -34,9 +53,10 @@ async function checkPositiveBalanceAnGetIt(
   amount: number
 ): Promise<LeanDocument<AccountDocument> | null> {
   const accountValues = await findAccount({ _id: accountId });
-  if(!accountValues)throw new Error("Could not find origin account, please check data") 
+  if (!accountValues)
+    throw new Error("Could not find origin account, please check data");
   if (accountValues.balance > amount) return accountValues;
-  return null
+  return null;
 }
 
 async function makeTransaction(
