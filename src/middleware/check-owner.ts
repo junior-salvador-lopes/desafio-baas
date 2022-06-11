@@ -13,8 +13,10 @@ const checkOwner = async (
     return res.sendStatus(403);
   }
 
-  if (user.account._id !== req.body?.fromAccountId) return res.sendStatus(403)
-
+  if (user.account._id !== req.body?.fromAccountId) {
+    log.error("account owner and session user doesn't matches")
+    return res.sendStatus(403)
+  }
   return next();
 };
 
