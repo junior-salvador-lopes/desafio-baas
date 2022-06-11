@@ -21,6 +21,7 @@ export const createAccountSchema = object({
     password: string()
       .required("Password is required")
       .min(6, "Password is too short - should be 6 chars minimum.")
+      .max(6, "Password is too long - should be 6 chars maximum.")
       .matches(/^[a-zA-Z0-9_.-]*$/, "Password can only contain Latin letters."),
     passwordConfirmation: string().oneOf(
       [ref("password"), null],
@@ -37,6 +38,7 @@ export const createAccountSessionSchema = object({
     password: string()
       .required("Password is required")
       .min(6, "Password is too short - should be 6 chars minimum.")
+      .max(6, "Password is too long - should be 6 chars maximum.")
       .matches(/^[a-zA-Z0-9_.-]*$/, "Password can only contain Latin letters."),
     accountNumber: string()
       .required("Account Number is required")

@@ -14,7 +14,6 @@ export async function createAccount(
 export async function updateAccount(
   input: DocumentDefinition<AccountDocument>
 ) {
-  console.log(input._id)
   try {
     return await Account.updateOne(
       { _id: input._id },

@@ -14,6 +14,12 @@ export async function findUser(query: FilterQuery<UserDocument>) {
   return User.findOne(query).lean().select("-password");
 }
 
+
+export async function findUserWithPassword(query: FilterQuery<UserDocument>){
+  return User.findOne(query).lean()
+
+}
+
 export async function getUsers() {
   return await User.find().select("name")
 }

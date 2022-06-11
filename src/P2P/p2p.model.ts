@@ -4,6 +4,7 @@ export interface P2PDocument extends mongoose.Document {
   fromAccountId: string;
   toAccountId: string;
   amount: number;
+  password: string
   createdAt: Date;
   updatedAt: Date;
 }
@@ -12,6 +13,7 @@ const P2PSchema = new mongoose.Schema(
         fromAccountId: { type: mongoose.Schema.Types.ObjectId, ref: "Account" },
         toAccountId: { type: mongoose.Schema.Types.ObjectId, ref: "Account" },
         amount: { type: Number, required: true },
+        password: { type: String, required: true },
     },
     { timestamps: true }
   );
