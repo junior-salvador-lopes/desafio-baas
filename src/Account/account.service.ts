@@ -16,6 +16,7 @@ export async function updateAccount(
 ) {
   try {
     return await Account.updateOne(
+      //@ts-ignore
       { _id: input._id },
       { $set: { balance: input.balance } }
     );

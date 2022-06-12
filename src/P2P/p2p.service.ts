@@ -1,4 +1,5 @@
 import { DocumentDefinition, LeanDocument } from "mongoose";
+//@ts-ignore
 import bcrypt from "bcrypt";
 import { AccountDocument } from "../Account/account.model";
 import { findAccount, updateAccount } from "../Account/account.service";
@@ -85,5 +86,5 @@ async function makeTransaction(
 }
 
 async function checkPassword(accountPassword: string, password: string) {
-  return await bcrypt.compare(password, accountPassword).catch((e) => false);
+  return await bcrypt.compare(password, accountPassword).catch((e: any) => false);
 }
