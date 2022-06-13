@@ -1,32 +1,34 @@
 import { LeanDocument, FilterQuery, UpdateQuery } from "mongoose";
 import config from "config";
 import { get } from "lodash";
-import  { UserDocument }  from "../model/user.model";
-import Session, { SessionDocument } from "../model/session.model";
+import  { AccountDocument }  from "../Account/account.model";
+import Session, { SessionDocument } from "./session.model";
 import { sign, decode } from "../utils/jwt.utils";
-import { findUser } from "./user.service";
+import { findAccount } from "../Account/account.service";
+import { omit } from "lodash";
 
-export async function createSession(userId: string, userAgent: string) {
-  const session = await Session.create({ user: userId, userAgent });
 
-  return session.toJSON();
+export async function createSession(accountId: string, userAgent: string) {
+  const session = await Session.create({ account: accountId, userAgent });
+
+  return omit(session.toJSON(), "password");
 }
 
 export function createAccessToken({
-  user,
+  account,
   session,
 }: {
-  user:
-    | Omit<UserDocument, "password">
-    | LeanDocument<Omit<UserDocument, "password">>;
+  account:
+    | Omit<AccountDocument, "password">
+    | LeanDocument<Omit<AccountDocument, "password">>;
   session:
     | Omit<SessionDocument, "password">
     | LeanDocument<Omit<SessionDocument, "password">>;
 }) {
   // Build and return the new access token
   const accessToken = sign(
-    { ...user, session: session._id },
-    { expiresIn: config.get("accessTokenTtl") } // 15 minutes
+    { account, session: session._id },
+    { expiresIn: config.get("accessTokenTtl") } // 120 minutes
   );
 
   return accessToken;
@@ -48,11 +50,11 @@ export async function reIssueAccessToken({
   // Make sure the session is still valid
   if (!session || !session?.valid) return false;
 
-  const user = await findUser({ _id: session.user });
+  const account = await findAccount({ _id: session.account });
 
-  if (!user) return false;
+  if (!account) return false;
 
-  const accessToken = createAccessToken({ user, session });
+  const accessToken = createAccessToken({ account, session });
 
   return accessToken;
 }

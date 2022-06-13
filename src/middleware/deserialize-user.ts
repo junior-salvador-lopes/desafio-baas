@@ -1,17 +1,14 @@
 import { get } from "lodash";
 import { Request, Response, NextFunction } from "express";
 import { decode } from "../utils/jwt.utils";
-import { reIssueAccessToken } from "../service/session.service";
+import { reIssueAccessToken } from "../Session/session.service";
 
 const deserializeUser = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const accessToken = get(req, "headers.authorization", "").replace(
-    /^Bearer\s/,
-    ""
-  );
+  const accessToken = get(req, "headers.authorization", "")
 
   const refreshToken = get(req, "headers.x-refresh");
 
@@ -21,8 +18,7 @@ const deserializeUser = async (
 
   if (decoded) {
     // @ts-ignore
-    req.user = decoded;
-
+    req.account = decoded;
     return next();
   }
 
@@ -36,7 +32,7 @@ const deserializeUser = async (
       const { decoded } = decode(newAccessToken);
 
       // @ts-ignore
-      req.user = decoded;
+      req.account = decoded;
     }
 
     return next();

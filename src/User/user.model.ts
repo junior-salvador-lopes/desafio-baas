@@ -5,27 +5,23 @@ import config from "config";
 export interface UserDocument extends mongoose.Document {
   email: string;
   name: string;
+  cpf: string;
   password: string;
   createdAt: Date;
   updatedAt: Date;
-  comparePassword(candidatePassword: string): Promise<boolean>;
+  comparePassword(userPassword: string): Promise<boolean>;
 }
 
 const UserSchema = new mongoose.Schema(
   {
     email: { type: String, required: true, unique: true },
+    cpf: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     password: { type: String, required: true },
   },
   { timestamps: true }
 );
-export interface HookNextFunction {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (error?: Error): any
-  }
-  
-
-UserSchema.pre("save", async function (next: HookNextFunction) {
+UserSchema.pre("save", async function (next: any) {
   let user = this as UserDocument;
 
   // only hash the password if it has been modified (or is new)
@@ -42,15 +38,16 @@ UserSchema.pre("save", async function (next: HookNextFunction) {
   return next();
 });
 
-// Used for logging in
+// Used for safety in transfers
 UserSchema.methods.comparePassword = async function (
-  candidatePassword: string
+  userPassword: string
 ) {
   const user = this as UserDocument;
 
-  return bcrypt.compare(candidatePassword, user.password).catch((e) => false);
+  return bcrypt.compare(userPassword, user.password).catch((e) => false);
 };
 
 const User = mongoose.model<UserDocument>("User", UserSchema);
 
 export default User;
+

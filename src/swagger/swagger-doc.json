@@ -1,0 +1,578 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Esta é a documentação da aplicação Bank as a Service",
+    "version": "1.0.0",
+    "title": "BAAS"
+  },
+  "host": "localhost:1337",
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "accounts",
+      "description": "Sobre as contas do banco"
+    },
+    { "name": "p2p", "description": "Rotas das transações financeiras" },
+    {
+      "name": "users",
+      "description": "Serviços sobre usuários"
+    }
+  ],
+  "schemes": ["http"],
+  "paths": {
+    "/upload-bass-file/{_id}": {
+      "post": {
+        "tags": ["users"],
+        "summary": "upload de aqrquivos",
+        "description": "serviço que salva os arquivos de um usuários na pasta personalizada com seu id",
+        "operationId": "uploadFile",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "ID do usuário que está fazendo o upload",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "baasFile",
+            "in": "formData",
+            "description": "arquivo para upload",
+            "required": false,
+            "type": "file"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "String de autenticação recebida como resposta do Login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-refresh",
+            "in": "header",
+            "description": "String de renovação da autenticação",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "403": { "description": "user required" },
+
+          "500": {
+            "description": "Server Error",
+            "schema": { "$ref": "#/definitions/ApiResponse" }
+          }
+        }
+      }
+    },
+    "/accounts": {
+      "post": {
+        "tags": ["accounts"],
+        "summary": "Criar a conta",
+        "description": "Crie a conta com a senha que será usada no Login",
+        "operationId": "addAccount",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "objeto Account que será criado ",
+            "required": true,
+            "schema": { "$ref": "#/definitions/Account" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/Account" }
+          },
+          "409": { "description": "Invalid input" },
+          "400": { "description": "Bad Request" }
+        }
+      },
+      "get": {
+        "tags": ["accounts"],
+        "summary": "Listar contas",
+        "description": "Listagem de todas as contas devolvendo id da conta, id do proprietário e número da mesma",
+        "operationId": "GetAllAccounts",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "String de autenticação recebida como resposta do Login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-refresh",
+            "in": "header",
+            "description": "String de renovação da autenticação",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/GetAllAccountsResponse" }
+            }
+          },
+          "404": { "description": "Account not found" },
+          "405": { "description": "Validation exception" }
+        }
+      }
+    },
+    "/accounts/{_id}": {
+      "get": {
+        "tags": ["accounts"],
+        "summary": "Detalhes de uma conta",
+        "description": "Mostra todos os detalhes de uma conta através do id",
+        "operationId": "getAccountDetails",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "ID da conta que será detalhada",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "String de autenticação recebida como resposta do Login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-refresh",
+            "in": "header",
+            "description": "String de renovação da autenticação",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": { "$ref": "#/definitions/Account" }
+          },
+          "409": { "description": "Invalid input" },
+          "400": { "description": "Bad Request" },
+          "403": { "description": "user required" }
+        }
+      }
+    },
+    "/accounts/balance/{_id}": {
+      "get": {
+        "tags": ["accounts"],
+        "summary": "Saldo da conta",
+        "description": "Retorna o número da conta e o saldo da mesma",
+        "operationId": "getAccountBalance",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "ID da conta que faz a requisição",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "String de autenticação recebida como resposta do Login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-refresh",
+            "in": "header",
+            "description": "String de renovação da autenticação",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": { "$ref": "#/definitions/GetAccountBalanceResponse" }
+          },
+          "409": { "description": "Invalid input" },
+          "400": { "description": "Bad Request" },
+          "403": { "description": "user required" },
+          "401": { "description": "Authorization/Credential problem" }
+        }
+      }
+    },
+
+    "/p2p": {
+      "post": {
+        "tags": ["p2p"],
+        "summary": "Cria a transferência entre contas",
+        "description": "Cria a transferência entre contas necessitando da senha do usuário de onde parte a ação",
+        "operationId": "createP2P",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Dados das contas e montante",
+            "required": true,
+            "schema": { "$ref": "#/definitions/P2P" }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "String de autenticação recebida como resposta do Login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-refresh",
+            "in": "header",
+            "description": "String de renovação da autenticação",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful transaction, you can check rigth now your balance",
+            "schema": { "$ref": "#/definitions/P2P" }
+          },
+          "409": { "description": "Invalid input" },
+          "400": { "description": "Bad Request" },
+          "403": { "description": "user required" },
+          "401": { "description": "Authorization/Credential problem" }
+        }
+      }
+    },
+    "p2p/{_id}": {
+      "get": {
+        "tags": ["p2p"],
+        "summary": "Lista as transferências de uma conta",
+        "description": "Lista as transferências de uma conta",
+        "operationId": "getAllP2P",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "description": "id da conta que faz a requisição",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "String de autenticação recebida como resposta do Login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-refresh",
+            "in": "header",
+            "description": "String de renovação da autenticação",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/P2P" }
+            }
+          },
+          "409": { "description": "Invalid input" },
+          "400": { "description": "Bad Request" },
+          "403": { "description": "user required" },
+          "401": { "description": "Authorization/Credential problem" }
+        }
+      }
+    },
+    "/login": {
+      "get": {
+        "tags": ["sessions"],
+        "summary": "Logs user into the system",
+        "description": "",
+        "operationId": "loginUser",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "accountNumber",
+            "in": "body",
+            "description": "número da conta",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "description": "Senha da Conta",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": { "$ref": "#/definitions/LoginResponse" }
+          },
+          "401": { "description": "Invalid accountNumber or password" }
+        }
+      }
+    },
+    "/logout": {
+      "delete": {
+        "tags": ["sessions"],
+        "summary": "Logs out do usuário",
+        "description": "",
+        "operationId": "logoutUser",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "String de autenticação recebida como resposta do Login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-refresh",
+            "in": "header",
+            "description": "String de renovação da autenticação",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": { "description": "successful operation" },
+          "403": { "description": "user required" }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Cria Usuário",
+        "description": "",
+        "operationId": "createUser",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Cria o objeto Usuário",
+            "required": true,
+            "schema": { "$ref": "#/definitions/User" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": { "$ref": "#/definitions/CreateUserResponse" }
+          },
+
+          "409": {
+            "description": "error while creating user"
+          }
+        }
+      },
+      "get": {
+        "tags": ["users"],
+        "summary": "Listar usuários",
+        "description": "Listagem de todas os usuários devolvendo id  e nome dos mesmos",
+        "operationId": "GetAllUsers",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "String de autenticação recebida como resposta do Login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-refresh",
+            "in": "header",
+            "description": "String de renovação da autenticação",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/GetAllUsersResponse" }
+            }
+          },
+          "404": { "description": "Account not found" },
+          "405": { "description": "Validation exception" }
+        }
+      }
+    },
+    "/users/{_id}": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Detalhes de um usuario",
+        "description": "Mostra todos os detalhes de um usuário através do id",
+        "operationId": "getAccountDetails",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "path",
+            "description": "ID do usuário que será detalhado",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "description": "String de autenticação recebida como resposta do Login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "x-refresh",
+            "in": "header",
+            "description": "String de renovação da autenticação",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": { "$ref": "#/definitions/User" }
+          },
+          "409": { "description": "Invalid input" },
+          "400": { "description": "Bad Request" },
+          "403": { "description": "user required" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ApiResponse": {
+      "type": "object",
+      "properties": {
+        "code": { "type": "integer", "format": "int32" },
+        "type": { "type": "string" },
+        "message": { "type": "string" }
+      }
+    },
+    "P2P": {
+      "type": "object",
+      "required": ["fromAccountId", "toAccountId", "amount", "password"],
+      "properties": {
+        "fromAccountId": { "type": "string" },
+        "toAccountId": { "type": "string" },
+        "amount": { "type": "integer" },
+        "accountNumber": { "type": "string" },
+        "password": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "Account": {
+      "type": "object",
+      "required": [
+        "name",
+        "ownerId",
+        "accountNumber",
+        "identifier",
+        "password",
+        "agency"
+      ],
+      "properties": {
+        "_id": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "name": { "type": "string" },
+        "accountNumber": { "type": "string" },
+        "identifier": { "type": "string" },
+        "password": { "type": "string" },
+        "agency": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "GetAllAccountsResponse": {
+      "type": "object",
+      "properties": {
+        "_id": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "name": { "type": "string" },
+        "accountNumber": { "type": "string" }
+      }
+    },
+    "GetAllUsersResponse": {
+      "type": "object",
+      "properties": {
+        "_id": { "type": "string" },
+        "name": { "type": "string" }
+      }
+    },
+    "GetAccountBalanceResponse": {
+      "type": "object",
+      "properties": {
+        "_id": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "balance": { "type": "integer" },
+        "account": { "type": "string" }
+      }
+    },
+    "User": {
+      "type": "object",
+      "required": ["name", "email", "password", "passwordConfirmation", "cpf"],
+      "properties": {
+        "_id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "password": { "type": "string" },
+        "passwordConfirmation": { "type": "string" },
+        "cpf": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    },
+    "LoginResponse": {
+      "type": "object",
+      "properties": {
+        "accessToken": { "type": "string" },
+        "refreshToken": { "type": "string" }
+      }
+    },
+    "CreateUserResponse": {
+      "type": "object",
+      "properties": {
+        "_id": { "type": "string" },
+        "username": { "type": "string" },
+        "email": { "type": "string" },
+        "cpf": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      }
+    }
+  }
+}
