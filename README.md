@@ -5,6 +5,10 @@ Instalação:
  
 $ yarn
 
+- Para  usar a aplicação
+
+$ yarn dev
+
 Insomnia:
 dentro da pasta raiz há o arquivo "collection_insomnia_exemplo.json" que contém as rotas do sistema, inclusive do Swagger.
 
