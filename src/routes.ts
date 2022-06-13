@@ -23,16 +23,17 @@ import { createP2PHandler, getP2PHandler } from "./P2P/p2p.controller";
 import checkOwner from "./middleware/check-owner";
 import uploads from "./upload/upload-service";
 
+
 const sessionController = new SessionController();
 
 export default function (app: Express) {
-  app.get("/healthcheck", (req: Request, res: Response) => res.sendStatus(200));
   app.get(
     "/api/sessions",
     requiresUser,
     sessionController.getUserSessionsHandler
   );
-  app.post("/api/users", validateRequest(createUserSchema), createUserHandler);
+
+  app.post("/api/user", validateRequest(createUserSchema), createUserHandler);
   app.get("/api/users/:_id", requiresUser, getUserDetailsHandler);
   app.get("/api/users", requiresUser, getAllUsersHandler);
   app.post(
@@ -51,7 +52,7 @@ export default function (app: Express) {
     createAccountHandler
   );
   app.get("/api/accounts/:_id", requiresUser, getAccountDetailsHandler);
-  app.get("/api/accounts/balance/:_id", requiresUser, getAccountBalanceHandler);
+  app.get("/api/accounts/balance/:_id", requiresUser,checkOwner, getAccountBalanceHandler);
   app.get("/api/accounts", requiresUser, getAllAccountsHandler);
   app.post(
     "/api/p2p",
@@ -63,6 +64,7 @@ export default function (app: Express) {
   app.get("/api/p2p/:_id", requiresUser, getP2PHandler);
   app.post(
     "/api/upload-baas-file/:id",
+    requiresUser,
     uploads.single("baasFile"),
     (req, res) => {
       try {
